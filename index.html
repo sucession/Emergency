@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Decryptor</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // Oculta el texto de "no se puede instalar" y muestra el botón
+      document.getElementById('cannotInstall').style.display = 'none';
+      document.getElementById('installBtn').style.display = 'block';
+    });
+
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+          // Oculta el botón después de la interacción
+          document.getElementById('installBtn').style.display = 'none';
+        });
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js');
+      });
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-main: #f9fafb;
+      --bg-secondary: #ffffff;
+      --border-color: #D1D5DB;
+      --text-main: #111827;
+      --text-secondary: #6B7280;
+      --accent-color: #6366F1;
+      --accent-hover: #4F46E5;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      padding: 24px;
+      max-width: 600px;
+      margin: auto;
+      position: relative;
+    }
+
+    h1 {
+      color: var(--text-main);
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+
+    label {
+        font-weight: 600;
+        font-size: 0.9em;
+        color: var(--text-secondary);
+    }
+
+    input[type="password"], 
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 4px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-secondary);
+      color: var(--text-main);
+      font-size: 1em;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="password"]:focus, 
+    textarea:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px var(--accent-hover);
+    }
+
+    textarea {
+        height: 180px;
+        resize: vertical;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 12px;
+      margin: 8px 0;
+    }
+
+    .button-container button {
+      flex: 1;
+      background-color: var(--accent-color);
+      color: white;
+      font-size: 1.1em;
+      font-weight: 600;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .button-container button:hover {
+      background-color: var(--accent-hover);
+    }
+    
+    .menu-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+    }
+    .menu-button:hover {
+        color: var(--text-main);
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: var(--bg-secondary);
+      min-width: 180px;
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      z-index: 1;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      padding: 4px;
+    }
+    
+    /* Estilo para el texto cuando no se puede instalar */
+    .dropdown-content .cannot-install-text {
+        color: var(--text-secondary);
+        padding: 10px 14px;
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+    .dropdown-content button {
+      background-color: var(--accent-color);
+      color: white;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      display: block;
+      width: 10

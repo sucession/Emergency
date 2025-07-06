@@ -1,0 +1,16 @@
+
+{
+  "name": "Encrypt/Decrypt",
+  "short_name": "Encrypt/Decrypt",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#00d1b2",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

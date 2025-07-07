@@ -1,0 +1,6 @@
+name = "emergency" # This MUST match the name of your Cloudflare Pages project
+main = "./_worker.js" # This line is often needed for Pages sites, even if it's an empty or dummy worker. Cloudflare Pages uses it for things like functions.
+compatibility_date = "2025-07-07" # Crucial! Use the current date or a future date.
+
+[site]
+bucket = "./" # This tells Wrangler where your static files (index.html, etc.) are located

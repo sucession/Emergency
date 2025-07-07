@@ -1,3 +1,4 @@
-git add _worker.js
-git commit -m "Add empty _worker.js for Cloudflare Pages"
-git push origin main  # Or 'master' if your main branch is named master
+// _worker.js (Empty or minimal placeholder)
+// This file is required by Cloudflare Pages when using a wrangler.toml
+// with `main = "./_worker.js"`.
+// It serves as the entry point for Pages Functions, even if none are defined.

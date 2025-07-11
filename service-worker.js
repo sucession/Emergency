@@ -13,7 +13,6 @@ const urlsToCache = [
   'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto+Mono&display=swap'
 ];
 
-
 // Evento de instalación: se dispara cuando el navegador instala el service worker.
 self.addEventListener('install', event => {
   event.waitUntil(

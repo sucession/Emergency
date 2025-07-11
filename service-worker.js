@@ -1,5 +1,5 @@
 // Cambia la versión de la caché para forzar la actualización.
-const CACHE_NAME = 'aes-256-app-v4'; // nota: v4 para reflejar el cambio
+const CACHE_NAME = 'aes-256-app-v5'; // nota: v5 para reflejar el cambio
 
 // Lista de archivos que se guardarán en la caché, incluyendo fuentes e íconos.
 const urlsToCache = [

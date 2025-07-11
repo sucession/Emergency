@@ -1,14 +1,18 @@
 // Cambia la versión de la caché para forzar la actualización.
-const CACHE_NAME = 'aes-256-app-v3';
+const CACHE_NAME = 'aes-256-app-v4'; // nota: v4 para reflejar el cambio
 
-// Lista de archivos que se guardarán en la caché, incluyendo la fuente.
+// Lista de archivos que se guardarán en la caché, incluyendo fuentes e íconos.
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
-  './icon.png',
+  './favicon-32x32.png',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-512.png',
   'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto+Mono&display=swap'
 ];
+
 
 // Evento de instalación: se dispara cuando el navegador instala el service worker.
 self.addEventListener('install', event => {

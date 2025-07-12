@@ -5,25 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Encryptor</title>
 
-  <!-- Favicon para navegador -->
   <link rel="icon" href="favicon-32x32-v2.png" type="image/png" sizes="32x32">
 
-  <!-- Manifest para PWA -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- Tipografías -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto+Mono&display=swap" rel="stylesheet">
-
-  <!-- Service Worker -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js');
-      });
-    }
-  </script>
 
   <style>
     :root {
@@ -172,6 +160,14 @@
       cursor: pointer;
       transition: background-color 0.2s, color 0.2s, opacity 0.2s;
     }
+    button:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+    button:disabled:hover {
+        background-color: transparent;
+        color: var(--accent-color);
+    }
     button:hover {
       background-color: var(--accent-color);
       color: #ffffff;
@@ -208,14 +204,36 @@
       white-space: nowrap;
       border-width: 0;
     }
+    
+    .typewriter-effect {
+      font-family: 'Roboto Mono', monospace;
+      border-right: 2px solid var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      animation: blinkCursor 750ms steps(44) infinite normal;
+    }
+    @keyframes blinkCursor {
+      from {
+        border-right-color: var(--text-main);
+      }
+      to {
+        border-right-color: transparent;
+      }
+    }
+    .typewriter-target {
+        visibility: hidden;
+    }
+    #label-result-container, #output {
+        display: none;
+    }
   </style>
 </head>
 <body>
 
-  <label for="inputText">Enter text here</label>
+  <label for="inputText" id="label-input" class="typewriter-target">Enter text here</label>
   <textarea id="inputText" placeholder="Text to encrypt or decrypt"></textarea>
   
-  <label for="password">Password</label>
+  <label for="password" id="label-password" class="typewriter-target">Password</label>
   <div class="password-container">
     <input type="password" id="password" placeholder="Enter your password" />
     <button type="button" id="togglePasswordBtn" aria-label="Toggle password visibility">
@@ -225,12 +243,12 @@
   </div>
   
   <div class="button-container">
-    <button id="encryptBtn">Encrypt</button>
-    <button id="decryptBtn">Decrypt</button>
+    <button id="encryptBtn" disabled>Encrypt</button>
+    <button id="decryptBtn" disabled>Decrypt</button>
   </div>
   
   <div id="label-result-container">
-    <label for="output" id="label-result">Result</label>
+    <label for="output" id="label-result" class="typewriter-target">Result</label>
     <div id="result-buttons">
       <button id="clearBtn">Clear</button>
       <button id="copyBtn">Copy</button>
@@ -251,62 +269,49 @@
     
     async function getKeyFromPassword(password, salt) {
         const encoder = new TextEncoder();
-        const keyMaterial = await crypto.subtle.importKey(
-            'raw',
-            encoder.encode(password),
-            { name: 'PBKDF2' },
-            false,
-            ['deriveKey']
-        );
+        const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), { name: 'PBKDF2' }, false, ['deriveKey']);
+        return await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' }, keyMaterial, { name: 'AES-CBC', length: 256 }, true, ['encrypt', 'decrypt']);
+    }
 
-        return await crypto.subtle.deriveKey(
-            {
-                name: 'PBKDF2',
-                salt: salt,
-                iterations: 100000,
-                hash: 'SHA-256'
-            },
-            keyMaterial,
-            { name: 'AES-CBC', length: 256 },
-            true,
-            ['encrypt', 'decrypt']
-        );
+    function showResultSectionAndAnimate(refs) {
+        document.getElementById('label-result-container').style.display = 'flex';
+        document.getElementById('output').style.display = 'block';
+        const resultLabel = refs.resultLabel;
+        if (resultLabel.getAttribute('data-animated') !== 'true') {
+            typewriterEffect(resultLabel);
+            resultLabel.setAttribute('data-animated', 'true');
+        }
     }
 
     async function encrypt(refs) {
+      showResultSectionAndAnimate(refs);
       refs.outputField.value = '';
       refs.outputField.classList.remove('error', 'success');
       refs.liveAnnouncer.textContent = '';
       try {
         const text = refs.inputText.value;
         const password = refs.passwordField.value;
-        
         if (!text || !password) {
-          const errorMessage = "❌ Text and password are required to continue.";
-          refs.outputField.value = errorMessage;
-          refs.outputField.classList.add('error');
-          refs.liveAnnouncer.textContent = "Error: Text and password are required to continue.";
-          return;
+          throw new Error("Text and password are required to continue.");
         }
-
         const salt = crypto.getRandomValues(new Uint8Array(16));
         const iv = crypto.getRandomValues(new Uint8Array(16));
         const cryptoKey = await getKeyFromPassword(password, salt);
         const plaintext = new TextEncoder().encode(text);
         const ciphertext = await crypto.subtle.encrypt({ name: "AES-CBC", iv }, cryptoKey, plaintext);
-        
         const result = new Uint8Array(salt.length + iv.length + ciphertext.byteLength);
         result.set(salt, 0);
         result.set(iv, salt.length);
         result.set(new Uint8Array(ciphertext), 32); 
         
-        refs.outputField.value = bytesToBase64(result);
+        await typewriterForTextarea(refs.outputField, bytesToBase64(result));
+        
         refs.outputField.classList.add('success');
         refs.liveAnnouncer.textContent = "Text encrypted successfully.";
       } catch (err) {
-        const errorMessage = "❌ Encryption failed. The text could not be processed.";
-        refs.outputField.value = errorMessage;
+        const errorMessage = `❌ ${err.message || 'Encryption failed.'}`;
         refs.outputField.classList.add('error');
+        await typewriterForTextarea(refs.outputField, errorMessage);
         refs.liveAnnouncer.textContent = "Error: Encryption failed.";
       } finally {
         updateButtonVisibility(refs);
@@ -314,38 +319,41 @@
     }
 
     async function decrypt(refs) {
+      showResultSectionAndAnimate(refs);
       refs.outputField.value = '';
       refs.outputField.classList.remove('error', 'success');
       refs.liveAnnouncer.textContent = '';
       try {
         const b64 = refs.inputText.value.trim();
         const password = refs.passwordField.value;
-        
         if (!b64 || !password) {
-          const errorMessage = "❌ Encrypted text and password are required to continue.";
-          refs.outputField.value = errorMessage;
-          refs.outputField.classList.add('error');
-          refs.liveAnnouncer.textContent = "Error: Encrypted text and password are required to continue.";
-          return;
+          throw new Error("Encrypted text and password are required to continue.");
         }
-
         const data = base64ToBytes(b64);
         const salt = data.slice(0, 16);
         const iv = data.slice(16, 32);
         const ciphertext = data.slice(32);
-        
         const cryptoKey = await getKeyFromPassword(password, salt);
         const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, cryptoKey, ciphertext);
         const plaintext = new TextDecoder().decode(decrypted);
         
-        refs.outputField.value = plaintext;
+        await typewriterForTextarea(refs.outputField, plaintext);
+        
         refs.outputField.classList.add('success');
         refs.liveAnnouncer.textContent = "Text decrypted successfully.";
       } catch (err) {
-        const errorMessage = "❌ Decryption failed. Please check that the password is correct and the text has not been altered.";
-        refs.outputField.value = errorMessage;
+        // --- CAMBIO: Mensajes de error personalizados ---
+        let customErrorMessage;
+        if (err.message.toLowerCase().includes('iv')) {
+            customErrorMessage = "❌ The provided text doesn't have a valid encryption format.";
+        } else {
+            customErrorMessage = "❌ Decryption failed. Please verify the password and try again.";
+        }
+        // --- FIN DEL CAMBIO ---
+
         refs.outputField.classList.add('error');
-        refs.liveAnnouncer.textContent = "Error: Decryption failed. Please check password and text.";
+        await typewriterForTextarea(refs.outputField, customErrorMessage);
+        refs.liveAnnouncer.textContent = "Error: Decryption failed.";
       } finally {
         updateButtonVisibility(refs);
       }
@@ -354,12 +362,84 @@
     function updateButtonVisibility(refs) {
       const hasAnyText = refs.inputText.value.length > 0 || refs.passwordField.value.length > 0 || refs.outputField.value.length > 0;
       refs.clearBtn.style.display = hasAnyText ? 'inline-block' : 'none';
-
       const canCopy = refs.outputField.value.length > 0 && !refs.outputField.classList.contains('error');
       refs.copyBtn.style.display = canCopy ? 'inline-block' : 'none';
     }
     
+    function typewriterEffect(element, onComplete, speed = 75) {
+        element.style.visibility = 'visible';
+        const text = element.getAttribute('data-text');
+        element.textContent = '';
+        element.classList.add('typewriter-effect');
+        let i = 0;
+        
+        function type() {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            } else {
+                element.style.borderRight = 'none';
+                if (onComplete) {
+                    onComplete();
+                }
+            }
+        }
+        type();
+    }
+
+    function typewriterForTextarea(textareaElement, text) {
+        return new Promise(resolve => {
+            let i = 0;
+            const speed = 15; 
+            textareaElement.value = '';
+
+            function type() {
+                if (i < text.length) {
+                    const chunkSize = Math.max(1, Math.floor(text.length / 200));
+                    const chunk = text.substring(i, i + chunkSize);
+                    textareaElement.value += chunk;
+                    i += chunkSize;
+                    setTimeout(type, speed);
+                } else {
+                    resolve();
+                }
+            }
+            type();
+        });
+    }
+
+    function isBase64(str) {
+        if (str.trim() === '' || str.length % 4 !== 0) {
+           return false;
+        }
+        const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/;
+        if (!base64Regex.test(str)) {
+            return false;
+        }
+        try {
+            return btoa(atob(str)) === str;
+        } catch (err) {
+            return false;
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        const labelInput = document.getElementById('label-input');
+        const labelPassword = document.getElementById('label-password');
+        const labelResult = document.getElementById('label-result');
+        [labelInput, labelPassword, labelResult].forEach(el => {
+            if(el) {
+                el.setAttribute('data-text', el.textContent);
+                el.textContent = '';
+            }
+        });
+
+        const initialSpeed = 40;
+        typewriterEffect(labelInput, () => {
+            typewriterEffect(labelPassword, null, initialSpeed);
+        }, initialSpeed);
+
         const refs = {
             inputText: document.getElementById('inputText'),
             passwordField: document.getElementById('password'),
@@ -369,14 +449,24 @@
             encryptBtn: document.getElementById('encryptBtn'),
             decryptBtn: document.getElementById('decryptBtn'),
             liveAnnouncer: document.getElementById('live-announcer'),
-            togglePasswordBtn: document.getElementById('togglePasswordBtn')
+            togglePasswordBtn: document.getElementById('togglePasswordBtn'),
+            resultLabel: labelResult
         };
+
+        function updatePrimaryButtonsState() {
+            const text = refs.inputText.value.trim();
+            const password = refs.passwordField.value.trim();
+            const hasPassword = password.length > 0;
+            refs.encryptBtn.disabled = !(text.length > 0 && hasPassword);
+            const isEncryptedText = isBase64(text);
+            refs.decryptBtn.disabled = !(isEncryptedText && hasPassword);
+        }
         
         refs.encryptBtn.addEventListener('click', () => encrypt(refs));
         refs.decryptBtn.addEventListener('click', () => decrypt(refs));
-
-        refs.inputText.addEventListener('input', () => updateButtonVisibility(refs));
-        refs.passwordField.addEventListener('input', () => updateButtonVisibility(refs));
+        
+        refs.inputText.addEventListener('input', updatePrimaryButtonsState);
+        refs.passwordField.addEventListener('input', updatePrimaryButtonsState);
 
         refs.copyBtn.addEventListener('click', () => {
             if (refs.outputField.value && !refs.outputField.classList.contains('error')) {
@@ -395,6 +485,21 @@
             refs.outputField.classList.remove('error', 'success');
             refs.liveAnnouncer.textContent = 'All fields cleared.';
             updateButtonVisibility(refs);
+            document.getElementById('label-result-container').style.display = 'none';
+            document.getElementById('output').style.display = 'none';
+            refs.resultLabel.textContent = '';
+            refs.resultLabel.setAttribute('data-animated', 'false');
+            updatePrimaryButtonsState();
+            
+            [labelInput, labelPassword].forEach(label => {
+                label.textContent = '';
+                label.style.borderRight = ''; 
+                label.classList.remove('typewriter-effect');
+            });
+
+            typewriterEffect(labelInput, () => {
+                typewriterEffect(labelPassword, null, initialSpeed);
+            }, initialSpeed);
         });
 
         refs.togglePasswordBtn.addEventListener('click', () => {
@@ -402,12 +507,10 @@
             const eyeClosed = document.getElementById('eye-closed');
             const type = refs.passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             refs.passwordField.setAttribute('type', type);
-
             eyeOpen.style.display = (type === 'password') ? 'block' : 'none';
             eyeClosed.style.display = (type === 'password') ? 'none' : 'block';
         });
 
-        updateButtonVisibility(refs);
     });
   </script>
 </body>

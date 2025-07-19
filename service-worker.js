@@ -10,6 +10,7 @@ const urlsToCache = [
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
+  './core_logic.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Roboto+Mono&display=swap'
 ];
 

@@ -1,23 +1,10 @@
-<svg width="512" height="512" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <g transform="translate(2, 2) scale(0.83)">
-    <rect x="0" y="0" width="28" height="28" rx="6" fill="#6366F1"/> 
-    
-    <g fill="white">
-      <path d="M7,2 C6.44771525,2 6,2.44771525 6,3 L6,25 C6,25.5522847 6.44771525,26 7,26 L21,26 C21.552285,26 22,25.552285 22,25 L22,9 L15,2 L7,2 Z M8,4 L14,4 L14,9 C14,9.5522847 14.447715,10 15,10 L20,10 L20,24 L8,24 L8,4 Z M16,4.41421356 L18.585786,7 L16,7 L16,4.41421356 Z"/>
-    </g>
-    
-    <rect x="4" y="12" width="20" height="5" fill="white"/>
-    
-    <g stroke="#6366F1" stroke-width="0.8" stroke-linecap="round" fill="none">
-      <g id="asterisk-scaled">
-        <path d="M0 -2 L0 2"/>
-        <path d="M-1.73 -1 L1.73 1"/>
-        <path d="M-1.73 1 L1.73 -1"/>
-      </g>
-      <use href="#asterisk-scaled" transform="translate(8.5, 14.5) scale(0.6)"/>
-      <use href="#asterisk-scaled" transform="translate(13.5, 14.5) scale(0.6)"/>
-      <use href="#asterisk-scaled" transform="translate(18.5, 14.5) scale(0.6)"/>
-      <use href="#asterisk-scaled" transform="translate(23.5, 14.5) scale(0.6)"/>
-    </g>
-  </g>
+<svg width="512" height="512" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="8" width="48" height="48" rx="10" fill="#6366F1"/>
+  
+  <path d="M23 14h12l8 8v24H23V14z" fill="white"/>
+  <path d="M34 14v8h8l-8-8z" fill="#d0d0d0"/>
+  
+  <rect x="20" y="30" width="24" height="8" fill="white"/>
+  
+  <text x="32" y="35" font-family="monospace, sans-serif" font-size="6" fill="#6366F1" text-anchor="middle" dominant-baseline="middle">****</text>
 </svg>

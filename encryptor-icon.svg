@@ -1,29 +1,23 @@
 <svg width="512" height="512" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <clipPath id="rounded-corners">
-      <rect x="2" y="2" width="28" height="28" rx="6"/>
-    </clipPath>
-    <g id="asterisk" stroke-width="0.8" stroke-linecap="round">
-      <path d="M0 -2 L0 2"/>
-      <path d="M-1.73 -1 L1.73 1"/>
-      <path d="M-1.73 1 L1.73 -1"/>
-    </g>
-  </defs>
-
-  <g clip-path="url(#rounded-corners)">
-    <rect x="2" y="2" width="28" height="28" fill="#6366F1"/>
+  <g transform="translate(2, 2) scale(0.83)">
+    <rect x="0" y="0" width="28" height="28" rx="6" fill="#6366F1"/> 
     
     <g fill="white">
-      <path d="M9,4 C8.44771525,4 8,4.44771525 8,5 L8,27 C8,27.5522847 8.44771525,28 9,28 L23,28 C23.552285,28 24,27.552285 24,27 L24,11 L17,4 L9,4 Z M10,6 L16,6 L16,11 C16,11.5522847 16.447715,12 17,12 L22,12 L22,26 L10,26 L10,6 Z M18,6.41421356 L20.585786,9 L18,9 L18,6.41421356 Z"/>
+      <path d="M7,2 C6.44771525,2 6,2.44771525 6,3 L6,25 C6,25.5522847 6.44771525,26 7,26 L21,26 C21.552285,26 22,25.552285 22,25 L22,9 L15,2 L7,2 Z M8,4 L14,4 L14,9 C14,9.5522847 14.447715,10 15,10 L20,10 L20,24 L8,24 L8,4 Z M16,4.41421356 L18.585786,7 L16,7 L16,4.41421356 Z"/>
     </g>
     
-    <rect x="6" y="14" width="20" height="5" fill="white"/>
+    <rect x="4" y="12" width="20" height="5" fill="white"/>
     
-    <g stroke="#6366F1">
-      <use href="#asterisk" transform="translate(10, 16.5) scale(0.6)"/>
-      <use href="#asterisk" transform="translate(14, 16.5) scale(0.6)"/>
-      <use href="#asterisk" transform="translate(18, 16.5) scale(0.6)"/>
-      <use href="#asterisk" transform="translate(22, 16.5) scale(0.6)"/>
+    <g stroke="#6366F1" stroke-width="0.8" stroke-linecap="round" fill="none">
+      <g id="asterisk-scaled">
+        <path d="M0 -2 L0 2"/>
+        <path d="M-1.73 -1 L1.73 1"/>
+        <path d="M-1.73 1 L1.73 -1"/>
+      </g>
+      <use href="#asterisk-scaled" transform="translate(8.5, 14.5) scale(0.6)"/>
+      <use href="#asterisk-scaled" transform="translate(13.5, 14.5) scale(0.6)"/>
+      <use href="#asterisk-scaled" transform="translate(18.5, 14.5) scale(0.6)"/>
+      <use href="#asterisk-scaled" transform="translate(23.5, 14.5) scale(0.6)"/>
     </g>
   </g>
 </svg>

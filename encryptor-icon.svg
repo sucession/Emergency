@@ -1,10 +1,26 @@
-<svg width="512" height="512" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <rect x="8" y="8" width="48" height="48" rx="10" fill="#6366F1"/>
+<svg width="512" height="512" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="32" height="32" rx="6" fill="#6366F1"/>
   
-  <path d="M23 14h12l8 8v24H23V14z" fill="white"/>
-  <path d="M34 14v8h8l-8-8z" fill="#d0d0d0"/>
-  
-  <rect x="20" y="30" width="24" height="8" fill="white"/>
-  
-  <text x="32" y="35" font-family="monospace, sans-serif" font-size="6" fill="#6366F1" text-anchor="middle" dominant-baseline="middle">****</text>
+  <g transform="translate(3.2, 3.2) scale(0.8)">
+    
+    <g fill="white">
+      <path d="M9,4 C8.44771525,4 8,4.44771525 8,5 L8,27 C8,27.5522847 8.44771525,28 9,28 L23,28 C23.552285,28 24,27.552285 24,27 L24,11 L17,4 L9,4 Z M10,6 L16,6 L16,11 C16,11.5522847 16.447715,12 17,12 L22,12 L22,26 L10,26 L10,6 Z M18,6.41421356 L20.585786,9 L18,9 L18,6.41421356 Z"/>
+    </g>
+    
+    <rect x="6" y="14" width="20" height="5" fill="white"/>
+    
+    <g stroke="#6366F1" stroke-width="0.8" stroke-linecap="round">
+        <defs>
+          <g id="asterisk">
+            <path d="M0 -2 L0 2"/>
+            <path d="M-1.73 -1 L1.73 1"/>
+            <path d="M-1.73 1 L1.73 -1"/>
+          </g>
+        </defs>
+        <use href="#asterisk" transform="translate(10, 16.5) scale(0.6)"/>
+        <use href="#asterisk" transform="translate(14, 16.5) scale(0.6)"/>
+        <use href="#asterisk" transform="translate(18, 16.5) scale(0.6)"/>
+        <use href="#asterisk" transform="translate(22, 16.5) scale(0.6)"/>
+    </g>
+  </g>
 </svg>
